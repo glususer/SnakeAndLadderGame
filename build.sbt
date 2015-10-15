@@ -1,4 +1,4 @@
-name := "snakeAndLadder" 
+name := "snakeAndLadder"
 
 version := "1.0"
 
