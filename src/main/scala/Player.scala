@@ -2,8 +2,9 @@
 /**
  * @author shivangi
  */
-class Player(name: String, var loc: Int) {
+class Player(name: String) {
   var isReady = false
+  var loc =0
 
   def getLocation: Int = this.loc
 

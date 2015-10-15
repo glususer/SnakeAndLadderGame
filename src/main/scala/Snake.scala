@@ -5,7 +5,7 @@
  */
 class Snake(loc: Location) {
 
-  def getPosition(): Location = loc
+  def getLocation(): Location = loc
 
-  override def toString(): String = "location of snake : " + getPosition()
+  override def toString(): String = "location of snake : " + getLocation()
 }

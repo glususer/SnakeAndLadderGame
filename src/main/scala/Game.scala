@@ -31,7 +31,7 @@ class Game(noOfPlayers: Int, noOfSnakes: Int, noOfLadders: Int) {
 
   def createPlayerList(noOfPlayers: Int): List[Player] = {
     var playerList: List[Player] = Nil
-    for (x <- 1 to noOfPlayers) playerList = playerList ::: List(new Player(x.toString, 0))
+    for (x <- 1 to noOfPlayers) playerList = playerList ::: List(new Player(x.toString))
     playerList
   }
 
@@ -40,7 +40,7 @@ class Game(noOfPlayers: Int, noOfSnakes: Int, noOfLadders: Int) {
   }
 
   def slideDownOnSnake(snake: Snake, player: Player) = {
-    player.loc = snake.getPosition().getEnd()
+    player.loc = snake.getLocation().getEnd()
   }
 
   def gameIsOver(playerList: List[Player]): Boolean = {
@@ -54,11 +54,18 @@ class Game(noOfPlayers: Int, noOfSnakes: Int, noOfLadders: Int) {
       println(player + " has rolled " + currentNumber + " and the current position is " + player.getLocation)
 
       val snake = snakeAndLadderBoard.cellHasSnake(player.getLocation)
-      if (snake != null) slideDownOnSnake(snake, player)
+      snake match {
+        case Some(snake)=>slideDownOnSnake (snake, player)
+        case None=>
+      }
 
       val ladder = snakeAndLadderBoard.cellHasLadder(player.getLocation)
-      if (ladder != null) moveUpLadder(ladder, player)
+      ladder match{
+        case Some(ladder)=>moveUpLadder(ladder, player)
+        case None=>
+      }
     }
+
   }
 }
 
