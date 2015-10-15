@@ -1,68 +1,56 @@
 
-import  scala.util.Random
+import scala.util.Random
 
 /**
  * @author shivangi
  */
-object snakeAndLadderBoard{
-
-	val noOfPlayers:Int = 4
-			var playerList:List[Player] = Nil
-			var snakeList:List[Snake] = Nil
-			var ladderList:List[Ladder] = Nil
-
-			def createPlayerList(noOfPlayers:Int):List[Player]={
-		var playerList:List[Player] = Nil
-				for (x <- 1 to noOfPlayers) playerList = playerList:::List( new Player(x.toString,0))   
-				this.playerList = playerList
-				playerList
-}
-
-def createSnakeList():List[Snake]={
-		var snakeList:List[Snake] = Nil
-				for (x <- 1 to 5){
-					var a, b = Random.nextInt(99)
-							snakeList = snakeList:::List( new Snake(new Position(math.max(a,b), math.min(a,b))))
-				}
-this.snakeList = snakeList
-for (snake <- snakeList) print (snake.toString(),"\n")
-snakeList
-}
-
-def createLadderList():List[Ladder]={
-		var ladderList:List[Ladder] = Nil
-				for (x <- 1 to 5){
-					var a, b = Random.nextInt(99)
-							var snakeinA = cellHasSnake(a)
-							var snakeinB = cellHasSnake(b)
-							var ladderinA=cellHasLadder(a)
-							var ladderinB = cellHasLadder(b)
-
-							while( snakeinA != null || snakeinB != null ||ladderinA != null|| ladderinB != null){
-								a= Random.nextInt(99)
-										b = Random.nextInt(99)
-										snakeinA = cellHasSnake(a)
-										snakeinB = cellHasSnake(b)
-										ladderinA=cellHasLadder(a)
-										ladderinB = cellHasLadder(b)
-							}
-					ladderList = ladderList:::List( new Ladder(new Position(math.min(a,b), math.max(a,b))))
-				}
-this.ladderList = ladderList
-for (ladder <- ladderList) print (ladder.toString(),"\n")
-ladderList
-}
-
-def generateBoard(noOfPlayers:Int):(List[Player],List[Snake], List[Ladder])= (createPlayerList(noOfPlayers), createSnakeList(), createLadderList())
-
-def cellHasSnake(number:Int):Snake={
-	for (snake <- this.snakeList if (snake.getPosition().getStart()== number)) return snake
-			null
-}
+object snakeAndLadderBoard {
+  var snakeList: List[Snake] = Nil
+  var ladderList: List[Ladder] = Nil
 
 
-def cellHasLadder(number:Int):Ladder={
-	for (ladder <- this.ladderList if (ladder.getPosition().getStart()== number))return ladder
-			null
-}
+  def createSnakeList(noOfSnakes: Int): List[Snake] = {
+    for (x <- 1 to noOfSnakes) {
+      val a, b = Random.nextInt(80)
+      snakeList = snakeList ::: List(new Snake(new Location(math.max(a, b), math.min(a, b))))
+    }
+    for (snake <- snakeList) print(snake, "\n")
+    snakeList
+  }
+
+  def createLadderList(noOfLadders: Int): List[Ladder] = {
+    for (x <- 1 to noOfLadders) {
+      var a, b = Random.nextInt(90)
+      var snakeInA = cellHasSnake(a)
+      var snakeInB = cellHasSnake(b)
+      var ladderInA = cellHasLadder(a)
+      var ladderInB = cellHasLadder(b)
+
+      while (snakeInA != null || snakeInB != null || ladderInA != null || ladderInB != null) {
+        a = Random.nextInt(99)
+        b = Random.nextInt(99)
+        snakeInA = cellHasSnake(a)
+        snakeInB = cellHasSnake(b)
+        ladderInA = cellHasLadder(a)
+        ladderInB = cellHasLadder(b)
+      }
+      ladderList = ladderList ::: List(new Ladder(new Location(math.min(a, b), math.max(a, b))))
+    }
+    for (ladder <- ladderList) print(ladder, "\n")
+    ladderList
+  }
+
+  def generateBoard(noOfSnakes: Int, noOfLadders: Int): (List[Snake], List[Ladder]) =
+    (createSnakeList(noOfSnakes), createLadderList(noOfLadders))
+
+  def cellHasSnake(number: Int): Snake = {
+    for (snake <- this.snakeList if (snake.getPosition().getStart() == number))  snake
+    null
+  }
+
+
+  def cellHasLadder(number: Int): Ladder = {
+    for (ladder <- this.ladderList if (ladder.getLocation().getStart() == number))  ladder
+    null
+  }
 }

@@ -1,5 +1,5 @@
-name := "snakeAndLadder" ;
+name := "snakeAndLadder" 
 
-version := "0.0.0" ;
+version := "1.0"
 
-scalaVersion := "2.11.6";
+scalaVersion := "2.11.6"

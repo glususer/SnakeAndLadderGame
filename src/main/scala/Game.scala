@@ -1,47 +1,64 @@
-
+import java.lang.reflect.Array
 
 /**
  * @author shivangi
  */
 
-object Main extends App {
-	val g = new Game(4).startGame()
+object Main extends App() {
+  if (args.length != 3)
+    throw new IllegalArgumentException("please pass required number of arguments in the form no of players, no of snakes, no of ladders");
+  val g = new Game(args(0).toInt, args(1).toInt, args(2).toInt).startGame()
 }
 
-class Game(noOfPlayers:Int){
-	def gameIsOver(playerList: List[Player]):Boolean={
-			for (player <- playerList if (player.hasWon() )) return true
-					false
-	}
+class Game(noOfPlayers: Int, noOfSnakes: Int, noOfLadders: Int) {
+  def startGame() = {
+    snakeAndLadderBoard.generateBoard(noOfSnakes, noOfPlayers)
+    val playerList = createPlayerList(noOfPlayers)
+    while (!gameIsOver(playerList)) {
+      for (player <- playerList if !gameIsOver(playerList)) {
+        var currentNumber = player.rollDice()
+        println(player + " rolled " + currentNumber)
+        play(player, currentNumber)
+        while (!gameIsOver(playerList) && player.hasAnotherChance(currentNumber) && player.canPlay(currentNumber)) {
+          currentNumber = player.rollDice()
+          println(player + " has another chance and has rolled " + currentNumber)
+          play(player, currentNumber)
+        }
+      }
+    }
+    for (player <- playerList if (player.hasWon())) println("Game Over and winner is " + player)
+  }
 
-	def startGame()={
-		var (playerList,snakeList,ladderList)=snakeAndLadderBoard.generateBoard(noOfPlayers)       
-				while(!gameIsOver(playerList)){
-					for (player <-playerList if !gameIsOver(playerList)){
-						var currentNumber = player.rollDice()
-								println(player +" rolled "+currentNumber)
-								play(player,currentNumber)
-								while (!gameIsOver(playerList) && player.hasAnotherChance(currentNumber)&& player.canPlay(currentNumber)){
-									currentNumber = player.rollDice()
-											println(player +" has another chance and has rolled "+currentNumber)
-											play(player,currentNumber)
-								}
-					}       
-				}
-		for (player <- playerList if (player.hasWon() )) println("Game Over and winner is "+player)
-	}
+  def createPlayerList(noOfPlayers: Int): List[Player] = {
+    var playerList: List[Player] = Nil
+    for (x <- 1 to noOfPlayers) playerList = playerList ::: List(new Player(x.toString, 0))
+    playerList
+  }
 
-	private def play(player:Player, currentNumber:Int)={
-		if(player.canPlay(currentNumber)){       
-			player.isReady()
-			if(player.canMove(currentNumber))  player.updatePosition(currentNumber)
-			println (player +" has rolled "+ currentNumber+" and the current position is "+player.getPosition)
+  def moveUpLadder(ladder: Ladder, player: Player) = {
+    player.loc = ladder.getLocation().getEnd()
+  }
 
-			var snake = snakeAndLadderBoard.cellHasSnake(player.getPosition)
-			if(snake!= null) snake.slideDownOnSnake(player)
+  def slideDownOnSnake(snake: Snake, player: Player) = {
+    player.loc = snake.getPosition().getEnd()
+  }
 
-			var ladder= snakeAndLadderBoard.cellHasLadder(player.getPosition) 
-			if (ladder != null) ladder.moveUpLadder(player)
-		}
-	}
+  def gameIsOver(playerList: List[Player]): Boolean = {
+    playerList.exists(_.hasWon())
+  }
+
+  private def play(player: Player, currentNumber: Int) = {
+    if (player.canPlay(currentNumber)) {
+      player.getReady()
+      if (player.canMove(currentNumber)) player.updatePosition(currentNumber)
+      println(player + " has rolled " + currentNumber + " and the current position is " + player.getLocation)
+
+      val snake = snakeAndLadderBoard.cellHasSnake(player.getLocation)
+      if (snake != null) slideDownOnSnake(snake, player)
+
+      val ladder = snakeAndLadderBoard.cellHasLadder(player.getLocation)
+      if (ladder != null) moveUpLadder(ladder, player)
+    }
+  }
 }
+
